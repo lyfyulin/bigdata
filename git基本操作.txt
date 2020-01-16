@@ -1,0 +1,90 @@
+## 1. github运行机制
+
+​          add       commit          push
+
+工作区 -> 暂存区 -> 本地仓库 -> 远程仓库
+
+> 工作区：电脑里直接看到的目录
+>
+> 暂存区：一般放在.git目录下的index文件中
+>
+> 本地仓库：工作区有一个隐藏目录.git，这个是本地仓库。
+>
+> 远程仓库：托管代码，国内有码云，国外有github，可以把代码与人共享。
+
+> 工作区到暂存区：git add
+>
+> 暂存区到本地仓库：git commit 
+>
+> 本地仓库到远程仓库：git push
+>
+> 工作区到本地仓库：git commit -a
+
+
+
+## 2. github仓库设置
+
+https://www.jianshu.com/p/31d239b85cd9
+
+
+
+
+
+## 3. git指令
+
+```markdown
+
+# 拷贝
+git clone 链接
+# 创建本地库
+git init
+# 登陆
+ssh -T git@github.com
+# 显示工作区昨天
+git status
+# 显示已写入缓存与已修改但尚未写入缓存的改动区别
+git diff
+# 添加文件夹
+git add fold1/
+# 添加文件到暂存区
+git add *
+# 提交暂存区到本地库
+git commit -m 'comments'
+# 同步本地库与远程库
+git push -u origin master
+# 删除文件或目录
+git rm
+# 文件或目录重命名
+git mv
+# 插销工作区修改
+git checkout
+# 撤销暂存区
+git reset head
+git reset head 文件名称
+git reset head 目录名称
+# 拉取远程库
+git pull
+# 显示所有标签
+git log
+# 创建分支
+git branch
+# 合并分支
+git merge
+# 显示所有标签
+git tag
+# 保存现场
+git stash
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
