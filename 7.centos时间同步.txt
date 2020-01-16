@@ -1,9 +1,25 @@
-
 1.下载ntpdate工具
-yum -y install ntp ntpdate
 
-2.设置系统时间与网络时间一至
+```shell
+yum -y install ntp ntpdate
+```
+
+2.设置系统时间与网络时间一致
+
+```shell
+# 同步亚洲时间
 ntpdate 0.asia.pool.ntp.org
 
+# 或者同步中国上海时间
+ntpdate -u ntp.api.bz
+
+# 或者同步中国上海时间（使用IP）
+ntpdate -u 17.253.68.253
+```
+
 3.将系统时间写入硬件
+
+```shell
 hwclock --systohc
+```
+

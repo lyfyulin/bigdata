@@ -1,8 +1,114 @@
-## 1.启动hive
 
-```shell
-hive
+
+## 1. Hive基本介绍
+
+Hive由Facebook开源用于***海量结构化日志***的数据统计。Hive是基于hadoop的一个***数据仓库工具***，可以将***结构化的数据文件映射为一张表***，并提供***类SQL***查询功能。
+
+> 本质：将HQL转化成MapReduce程序。
+
+### 1.1Hive架构
+
+![image-20200116195825835](F:\learning\大数据框架学习\images\image-20200116195825835.png)
+
+### 1.2Hive数据类型
+
+基本数据类型
+
+- TINTINT
+- SMALINT
+- INT
+- ***BIGINT***
+- BOOLEAN
+- FLOAT
+- ***DOUBLE***
+- ***STRING***
+- TIMESTAMP
+- BINARY
+
+集合数据类型
+
+- STRUCT  例如：{"name":"lyf",age:20}
+- MAP   键-值对
+- ARRAY  例如： ['1', '2']
+
+1）json格式数据，hive不能直接解析
+
+```json
+{
+    "name": "songsong",
+    "friends": ["bing", "feng"],	//Array
+    "children": {					//Map
+        "xiaosong": 18,
+        "xiaoli": 19
+    },
+    "address": {					//Struct
+        "street": "huilongguan",
+        "city": "beijing"
+    }
+}
 ```
+
+2）基于json数据结构，在hive里创建对应表，并导入数据。
+
+创建本地测试文件/usr/soft/data/test.txt
+
+```txt
+songsong,bing_feng,xiaosong:18_xiaoli:19,huilongguan_beijing
+yangyang,zhuang_li,xiaoqu:20_xiaoli:21,sanlitun_beijing
+```
+
+3）Hive上创建测试表
+
+```mysql
+create table test(
+	name string,
+    friends array<string>,
+    children map<string, int>,
+    address struct<street:string, city:string>
+)
+row format delimited fields terminated by ','
+collection items terminated by '_'
+map keys terminated by ':'
+lines terminated by '\n';
+```
+
+> row format delimited fields terminated by ','		-- 列分隔符
+>
+> collection items terminated by '_'							-- 数据分割符号
+>
+> map keys terminated by ':'										-- 键值对分隔符号
+>
+> lines terminated by '\n'											-- 行分隔符
+
+4）导入数据
+
+```mysql
+load data local inpath '/usr/soft/data/test.txt' into table test;
+select * from test;
+-- array查询
+select friends[1] from test;
+
+select children from test;
+-- map查询
+select children['xiaosong'] from test;
+-- struct查询
+select address.city from test;
+```
+
+### 1.3Hive和数据库对比
+
+1. 查询语言
+2. 数据存储位置
+3. 数据更新
+4. 索引
+5. 执行
+6. 执行延迟
+7. 可扩展性
+8. 数据规模
+
+## 3. hive基本语句
+
+### 3.1 数据库基本操作语句
 
 ```mysql
 -- 查看数据库
@@ -20,10 +126,6 @@ insert into student values (1, 'lyf');
 insert into student values (2, 'lww');
 ```
 
-
-
-
-
 >
 > 插入需要24s, 这是由于hadoop的特性, 写入慢读出快.
 
@@ -31,8 +133,6 @@ insert into student values (2, 'lww');
 > 需要对各主机进行时间同步。
 >
 > 解决方法使用centos时间同步
-
-
 
 ```mysql
 -- 查询表
@@ -42,10 +142,6 @@ select count(*) from student;
 -- 退出hive
 exit;
 ```
-
-
-
-
 
 
 ```shell
@@ -112,9 +208,311 @@ hive
 ```
 
 ```mysql
--- 从hadoo的根目录导入文件
-load data inpath '/student3.txt'
+-- 从hadoop的根目录导入文件
+load data inpath '/student3.txt' into table student2;
+select * from student2;
 ```
+
+### 3.2  hive其他命令
+
+```hive
+dfs -ls /;
+！ ls ./;
+```
+
+```shell
+cd ~
+# 查看历史
+cat .hivehistory
+# 命令行执行操作语句
+hive -e 'select * from student2;'
+# 命令行执行操作文件
+hive -f 'aa.sql'
+```
+
+### 3.3 配置文件
+
+默认目录/user/hive/warehousr/
+
+
+
+## 4. DDL数据定义
+
+### 4.1 创建数据库
+
+```mysql
+create database db_hive;
+use db_hive;
+-- 制定创建数据库在hadoop的位置
+create database db_hive2 location '/hive2'
+```
+
+
+
+```shell
+# 创建目录
+hadoop fs -mkdir -p /database/hive3
+hive
+```
+
+
+
+```mysql
+create database banzhang location '/database/hive3';
+show databases like 'hive*';
+desc database hive;
+```
+
+
+
+### 4.2 修改数据库
+
+```mysql
+alter database hive set dbproperties('createtime'='20191010')
+```
+
+
+
+### 4.3 删除数据库
+
+
+
+```mysql
+drop database db_hive2;
+
+drop database if exists db_hive2;
+```
+
+
+
+### 4.3 创建表
+
+```mysql
+-- **
+create [external] table [if not exists] table_name
+[(col_name type [comment col_comment], ...)]
+[comment table_comment]
+-- **
+[partitioned by (col_name type [comment col_comment], ...)]
+[clustered by (col_name, col_name, ...)]
+[sorted by (col_name [asc|desc], ...)] into num_buckets BUCKETS
+-- **
+[ROW FORMAT row_format]
+[stored as file_format]
+-- **
+[location hdfs_path]
+```
+
+
+
+### 4.4 管理表
+
+```mysql
+drop table test;
+```
+
+内部表可以直接删除表和原始数据。
+
+外部表可以直接删除表但是无法删除原始数据。
+
+> 内部表一般创建临时表，其他一般使用外部表。
+
+```mysql
+-- 查看表详情
+desc formatted student2;
+```
+
+内部表转为外部表。
+
+```mysql
+-- 将表改为外部表, 注意这里区分大小写
+alter table student2 set tblproperties('EXTERNAL'='TRUE')
+```
+
+
+
+### 4.5 分区表
+
+Hive分区就是分目录，将数据分割成小的数据集，在查询时使用where中指定分区。
+
+#### 创建分区表
+
+```mysql
+create table dept_partition(
+	deptno int, dname string, loc string
+)
+partitioned by (month string)
+row format delimited fields terminated by '\t';
+```
+
+创建文档/usr/soft/data/dept.txt
+
+```txt
+1	阿里	杭州
+2	百度	深圳
+3	腾讯	深圳
+4	华为	深圳
+5	美团	上海
+```
+
+#### 插入分区数据
+
+```mysql
+load data local inpath '/usr/soft/data/dept.txt' into table dept_partition partition(month='201705');
+load data local inpath '/usr/soft/data/dept.txt' into table dept_partition partition(month='201706');
+```
+
+
+
+#### 增加分区
+
+```mysql
+alter table dept_partition add partition(month='201707');
+alter table dept_partition add partition(month='201708') partition(month='201709');
+```
+
+```shell
+hadoop fs -put dept.txt /user/hive/warehouse/dept_partition/month=201709;
+```
+
+
+
+#### 删除分区
+
+```mysql
+-- 删除单个分区
+alter table dept_partition drop partition(month='201708');
+-- 删除多个分区
+alter table dept_partition drop partition(month='201705'), partition(month='201706');
+```
+
+
+
+### 4.6  创建二级分区
+
+#### 创建
+
+```mysql
+create table dept_partition2(
+	deptno int, 
+    dname string, 
+    loc string
+)
+partitioned by (month string, day string)
+row format delimited fields terminated by '\t';
+```
+
+
+
+#### 加载数据
+
+```mysql
+load data local inpath '/usr/soft/data/dept.txt' into table dept_partition2 partition(month='201709', day='13');
+
+hadoop fs -mkdir -p /user/hive/warehouse/dept_partition/month=201911;
+hadoop fs -put dept.txt /user/hive/warehouse/dept_partition/month=201911;
+```
+
+
+
+#### 查询
+
+```mysql
+select * from dept_partition2 where month ='201709' and day='13';
+
+```
+
+```shell
+# 创建分区文件夹
+hadoop fs -mkdir -p /user/hive/warehouse/dept_partition/month=201911;
+# 传入数据
+hadoop fs -put dept.txt /user/hive/warehouse/dept_partition/month=201911;
+# 开启hive
+hive
+# 修复数据表
+msck repair table dept_partition;
+# 重新查询
+select * from dept_partition;
+```
+
+方法一：上传数据时候说明分区
+
+方法二：上传文件后添加分区
+
+方法三：上传文件后，修复数据表 msck
+
+
+
+#### 删除
+
+```mysql
+alter table dept_partition2 drop partition(month='201709', day='13');
+```
+
+
+
+### 4.7 修改表
+
+#### 重命名
+
+```mysql
+alter table dept_partition2 rename to dept_partition3;
+show tables;
+alter table dept_partition3 rename to dept_partition2;
+show tables;
+```
+
+
+
+#### 增加修改替换列西溪
+
+```mysql
+select * from dept_partition;
+alter table dept_partition add columns (name string);
+select * from dept_partition;
+
+-- 修改列名
+desc dept_partition;
+alter table dept_partition change column name sex string;
+desc dept_partition;
+-- 修改列属性
+alter table dept_partition change column sex sex int;
+desc dept_partition;
+
+-- 替换所有列
+alter table dept_partition replace columns (did int);
+desc dept_partition;
+alter table dept_partition replace columns (did int, name string);
+desc dept_partition;
+select * from dept_partition;
+```
+
+> 替换列时，string和int可以转换。
+>
+> ***如果原表两列数据，替换为一列数据，再替换为两列数据，之前的第二列数据不会丢失的。***
+
+
+
+## 5 DML数据操作
+
+### 5.1 数据导入
+
+向表中装载数据
+
+```mysql
+select * from dept_partition;
+load data local path '/usr/soft/data/dept.txt' overwrite into table dept_partition;
+```
+
+
+
+
+
+
+
+
+
+
 
 
 
