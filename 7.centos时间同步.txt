@@ -1,0 +1,9 @@
+
+1.下载ntpdate工具
+yum -y install ntp ntpdate
+
+2.设置系统时间与网络时间一至
+ntpdate 0.asia.pool.ntp.org
+
+3.将系统时间写入硬件
+hwclock --systohc

@@ -1,0 +1,60 @@
+
+目录 hadoop/etc/hadoop/ 下配置6个文件
+
+
+1) core-site.xml
+<configuration>
+	<property>
+		<name>fs.defaultFS</name>
+		<value>hdfs://hadoop-master/</value>
+	</property>
+</configuration>
+
+2) hdfs-site.xml
+<configuration>
+	<property>
+		<name>dfs.replication</name>
+		<value>2</value>
+	</property>
+</configuration>
+
+3) yarn-site.xml
+<configuration>
+	<property>
+		<name>yarn.resourcemanager.hostname</name>
+		<value>hadoop-master</value>
+	</property>
+	<property>
+		<name>yarn.nodemanager.aux-services</name>
+		<value>mapreduce_shuffle</value>
+	</property>
+</configuration>
+
+4) mapreduce-site.xml
+<configuration>
+	<property>
+		<name>mapreduce.framework.name</name>
+		<value>yarn</value>
+	</property>
+</configuration>
+
+5) hadoop-env.sh   末尾加入
+export JAVA_HOME=/usr/soft/jdk
+
+6) slaves
+hadoop-slave1
+hadoop-slave2
+
+
+启动
+start-all.sh
+结束
+stop-yarn.sh
+stop-dfs.sh
+
+jps查询运行状态
+
+
+
+
+

@@ -1,0 +1,126 @@
+## 1.启动hive
+
+```shell
+hive
+```
+
+```mysql
+-- 查看数据库
+show databases;
+-- 创建数据库
+create database test;
+-- 使用数据库
+use default;
+-- 查看表
+show tables;
+-- 建表
+create table student(id int, name string);
+-- 向hive库插入数据——命令行方式
+insert into student values (1, 'lyf');
+insert into student values (2, 'lww');
+```
+
+
+
+
+
+>
+> 插入需要24s, 这是由于hadoop的特性, 写入慢读出快.
+
+> 如果报错Execution Error, return code 2 from org.apache.hadoop.hive.ql.exec.mr.MapRedTask
+> 需要对各主机进行时间同步。
+>
+> 解决方法使用centos时间同步
+
+
+
+```mysql
+-- 查询表
+select * from student;
+-- 聚合函数查询   耗时较长，需要使用MapReduce
+select count(*) from student;
+-- 退出hive
+exit;
+```
+
+
+
+
+
+
+```shell
+cd /usr/soft
+mkdir data
+cd data
+vi student.txt
+```
+
+```txt
+3	lcc
+4	hxz
+```
+
+```mysql
+-- 创建有格式的表
+create table student2(id int, name string) row format delimited fields terminated by '\t';
+```
+
+> **参数说明：**
+>
+> row format delimited表示每行都格式化一下
+> fields terminated by列分隔符
+> lines terminated by行分隔符
+
+-- 向hive库插入数据——文件方式1
+
+```mysql
+-- 导入文件到表
+load data local inpath '/usr/soft/data/student.txt' into table student2;
+-- 退出hive
+exit;
+```
+
+```shell
+vi student2.txt
+```
+
+```txt
+5	lcc
+6	lyl
+```
+
+```shell
+# 向hive库插入数据——文件方式2
+hadoop fs -put student2.txt /user/hive/warehouse/student2
+hive
+```
+
+```mysql
+-- 查看插入情况
+select * from student2;
+-- 退出hive
+exit;
+```
+
+```shell
+# 复制文件
+cp student2.txt student3.txt
+# 将文件上传至hadoop根目录
+hadoop fs -put student3.txt /
+# 启动hive
+hive
+```
+
+```mysql
+-- 从hadoo的根目录导入文件
+load data inpath '/student3.txt'
+```
+
+
+
+
+
+
+
+
+

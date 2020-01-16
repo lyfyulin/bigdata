@@ -1,0 +1,54 @@
+# 1.基本配置
+
+## 1.1 网络配置
+
+```shell
+vi /etc/sysconfig/network-scripts/ifcfg-ens33
+```
+
+文件中主要配置内容为：
+
+```txt
+BOOTPROTO=static
+ONBOOT=yes
+IPADDR=192.168.255.132
+NETMASK=255.255.255.0
+GATEWAY=192.168.255.130
+DNS1=199.29.29.29
+```
+
+如果在vmare下配置，需要查看网关。
+
+![image-20200116173206044](F:\learning大数据框架学习images\image-20200116173206044.png)
+
+
+
+服务重启
+
+```shell
+systemctl restart network.service
+ifconfig
+```
+
+
+
+## 1.2 主机名配置
+
+```shell
+vi /etc/hosts
+```
+
+
+
+## 1.3 关闭防火墙
+
+```shell
+systemctl stop firewalld.service
+```
+
+
+
+## 1.4 
+
+
+

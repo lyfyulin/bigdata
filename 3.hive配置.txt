@@ -1,0 +1,16 @@
+
+安装mysql
+安装hadoop
+启动hadoop
+
+配置hive-site.xml
+配置环境变量HIVE_HOME   PATH
+
+将mysql-connector-java-5.1.39.jar 复制到 hive/lib目录下
+
+启动hive
+
+
+
+
+
