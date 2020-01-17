@@ -1,6 +1,5 @@
 
-md目录 hadoop/etc/hadoop/ 下配置6个文件
-
+目录 hadoop/etc/hadoop/ 下配置6个文件
 
 1) core-site.xml
 <configuration>
@@ -39,20 +38,39 @@ md目录 hadoop/etc/hadoop/ 下配置6个文件
 </configuration>
 
 5) hadoop-env.sh   末尾加入
+
+```txt
 export JAVA_HOME=/usr/soft/jdk
+```
 
 6) slaves
+
+```txt
 hadoop-slave1
 hadoop-slave2
+```
 
 
-启动
+
+格式化 namenode 节点：
+
+```shell
+# 格式化 namenode
+hadoop namenode -format
+```
+
+
+
+```shell
+# 启动 start-dfs.sh 和 start-yarn.sh 的和合并
 start-all.sh
-结束
+
+# 结束 按顺序执行
 stop-yarn.sh
 stop-dfs.sh
+```
 
-jps查询运行状态
+jps查询运行状态，如果没有启动 namenode ，格式化 namenode 节点。
 
 
 

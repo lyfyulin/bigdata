@@ -38,7 +38,11 @@ ifconfig
 vi /etc/hosts
 ```
 
-
+```txt
+192.168.133.3 hadoop-master
+192.168.133.4 hadoop-slave1
+192.168.133.5 hadoop-slave2
+```
 
 ## 1.3 关闭防火墙
 
@@ -89,6 +93,13 @@ ssh hadoop-slave2
 ```
 
 
+
+#### 1.5 版本查询
+
+```shell
+# 操作系统查询
+cat /proc/version
+```
 
 
 
