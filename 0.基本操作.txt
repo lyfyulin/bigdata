@@ -48,7 +48,55 @@ systemctl stop firewalld.service
 
 
 
-## 1.4 
+## 1.4  ssh登录配置
+
+```shell
+# 安装 ssh
+yum install openssl openssh-server
+
+# 进入用户目录
+cd ~
+
+# 生成密钥（对三台机器均执行过该操作）
+ssh-keygen -t rsa
+回车
+回车
+回车
+
+# 进入文件夹
+cd .ssh
+# 登录本地 输入密码
+ssh localhost
+# 授权本地无密码登录 
+cat id_rsa.pub >> authorized_keys
+# 授权 hadoop-slave1 无密码登录 
+ssh hadoop-slave1 cat ~/.ssh/id_rsa.pub >> authorized_keys
+# 授权 hadoop-slave2 无密码登录 
+ssh hadoop-slave2 cat ~/.ssh/id_rsa.pub >> authorized_keys
+# 修改权限(不修改也没出错)
+chmod 600 authorized_keys
+# 传输文件 输入密码
+scp authorized_keys hadoop-slave1:/root/.ssh/
+# 传输文件 输入密码
+scp authorized_keys hadoop-slave2:/root/.ssh/
+
+# 无需密码输入
+ssh hadoop-master
+# 无需密码输入
+ssh hadoop-slave1
+# 无需密码输入
+ssh hadoop-slave2
+```
+
+
+
+
+
+
+
+
+
+
 
 
 

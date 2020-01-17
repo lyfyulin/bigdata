@@ -1,32 +1,49 @@
+安装mysql
 
-安装wget
+```shell
+# 安装 wget
 yum install wget
 
-获取mysql包
+# 获取 mysql 包
 wget -i -c http://dev.mysql.com/get/mysql57-community-release-el7-10.noarch.rpm
 
-安装mysql包
+# 安装 mysql 包
 yum -y install mysql57-community-release-el7-10.noarch.rpm
 
-安装mysql服务端
+# 安装 mysql 服务端
 yum -y install mysql-community-server
 
-启动 mysqld 服务
+# 启动 mysqld 服务
 systemctl start  mysqld.service
 systemctl enable mysqld
 systemctl daemon-reload
 
-生成一个密码
+# 生成一个密码
 grep "password" /var/log/mysqld.log
 
-
-输入提示密码登录
+# 输入提示密码登录
 mysql -u root -p
+```
 
 
-修改密码
->>> ALTER USER 'root'@'localhost' IDENTIFIED BY 'liYANfei.123';
+进入mysql修改密码。
+
+```mysql
+-- 修改密码
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'liYANfei.123';
+-- 授权远程登录用户和密码
+grant all privileges on *.* to 'root'@'%' identified by 'liYANfei.123';
+-- 刷新权限
+flush privileges;
+```
 
 
-授权远程登录用户和密码
->>> grant all privileges on *.* to 'root'@'%' identified by 'liYANfei.123';
+
+
+
+
+
+
+
+
+

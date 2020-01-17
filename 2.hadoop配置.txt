@@ -1,5 +1,5 @@
 
-目录 hadoop/etc/hadoop/ 下配置6个文件
+md目录 hadoop/etc/hadoop/ 下配置6个文件
 
 
 1) core-site.xml
